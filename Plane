@@ -5,23 +5,23 @@ import pandas as pd
 
 def plot_quiver_vis(df, selected_month, selected_year=2019):
   plt.close()
-  # ဖောင့်ပြဿနာ (ကိုးရီးယားစာ မပေါ်သည်များ) ရှင်းလင်းရန်
+  # ကိုရီးယားစာ ဖောင့်ပြဿနာ ရှင်းလင်းရန်
   plt.rcParams["font.family"] = "Malgun Gothic"
 
-  # ရွေးချယ်ထားသော နှစ်နှင့် လအလိုက် ဒေတာများကို စစ်ထုတ်ခြင်း (Filter data)
+  # ရွေးချယ်ထားသော နှစ်နှင့် လအလိုက် ဒေတာများကို စစ်ထုတ်ခြင်း
   df = df[(df["Year"] == selected_year) & (df["Month"] == selected_month)]
 
-  # လေတိုက်နှုန်း (Wind Speed - WSPD) ကို ပျမ်းမျှတွက်ချက်ပြီး ဇယားပုံစံပြောင်းခြင်း
+  # လေတိုက်နှုန်း (Wind Speed) အတွက် ပျမ်းမျှတွက်ချက်ခြင်း
   c = df.pivot_table("WSPD", "Day", "Hour", aggfunc="mean")
 
-  # လေတိုက်ရာ দিক (Wind Direction - WD) ကို ဒီဂရီမှ ကိုဩဒိနိတ် (u, v) သို့ ပြောင်းလဲတွက်ချက်ခြင်း
+  # လေတိုက်ရာ দিক (Wind Direction) အတွက် u, v တွက်ချက်ခြင်း
   u = np.cos(np.deg2rad(df.pivot_table("WD", "Day", "Hour", aggfunc="mean")))
   v = np.sin(np.deg2rad(df.pivot_table("WD", "Day", "Hour", aggfunc="mean")))
 
-  # x ဝင်ရိုး (နာရီ - 0 မှ 23 ထိ) သတ်မှတ်ခြင်း
+  # x ဝင်ရိုး (နာရီ - 0 မှ 23 ထိ)
   x = np.arange(0, 24, 1).tolist()
 
-  # လအလိုက် ရက်အရေအတွက်ပေါ်မူတည်၍ y ဝင်ရိုး (ရက်စွဲ) ကို ပြောင်းပြန်လှန်သတ်မှတ်ခြင်း
+  # လအလိုက် ရက်အရေအတွက်ပေါ်မူတည်၍ y ဝင်ရိုး (ရက်စွဲ) သတ်မှတ်ခြင်း
   if selected_month in [1, 3, 5, 7, 8, 10, 12]:
     y = np.arange(1, 32, 1)[::-1].tolist()
   elif selected_month in [4, 6, 9, 11]:
@@ -29,7 +29,7 @@ def plot_quiver_vis(df, selected_month, selected_year=2019):
   elif selected_month == 2:
     y = np.arange(1, 29, 1)[::-1].tolist()
 
-  # Quiver Plot (မြားပုံစံ လေတိုက်နှုန်း/ দিকပြဇယား) ဖန်တီးခြင်း
+  # Quiver Plot ဖန်တီးခြင်း
   plt.quiver(
       x,
       y,
@@ -42,8 +42,8 @@ def plot_quiver_vis(df, selected_month, selected_year=2019):
       color="blue",
       cmap=plt.cm.inferno_r,
   )
-  plt.colorbar()  # အရောင်ဘား ထည့်သွင်းခြင်း
-  plt.clim(0, 30)  # အရောင်အဆင့် သတ်မှတ်ချက်
+  plt.colorbar()
+  plt.clim(0, 30)
   plt.title(
       "{}년 {}월 풍향(degree), 풍속(kt) quiver plot".format(
           selected_year, selected_month
@@ -53,7 +53,12 @@ def plot_quiver_vis(df, selected_month, selected_year=2019):
   plt.ylabel("Day of a month")
   plt.xticks(x, fontsize=8, rotation=60)
   plt.yticks(y, fontsize=8)
-  plt.gcf().set_size_inches(20, 10)  # ဇယား၏ အရွယ်အစားကို ကြီးချဲ့ခြင်း
-  plt.grid()  # ကွက်လပ်ဇယားမျဉ်းများ ပေါ်လာစေရန်
-  plt.show()  # ဇယားကို ပြသရန်
+  plt.gcf().set_size_inches(20, 10)
+  plt.grid()
+  plt.show()
   return plt
+# ၁။ သင့်ရဲ့ CSV ဒေတာဖိုင်ကို ဖတ်ရှုခြင်း (ဖိုင်နာမည်ကို အမှန်အတိုင်း ပြင်ရေးပါ)
+df = pd.read_csv("your_data_file.csv")
+
+# ၂။ ၂၀၁၉ ခုနှစ်၊ ဇန်နဝါရီလ (Month 1) အတွက် ဇယားထုတ်ရန် Function ကို ခေါ်သုံးခြင်း
+plot_quiver_vis(df, selected_month=1, selected_year=2019)
